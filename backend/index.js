@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { configure } from './config/db.js';
+import AuthRoute from './routes/AuthRoutes.js'
 
 
 dotenv.config();
@@ -20,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // routes 
-
+app.use('/api/auth',AuthRoute)
 
 
 
