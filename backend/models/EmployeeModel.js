@@ -7,10 +7,10 @@ const EmployeeSchema = new mongoose.Schema({
     role:{type:String,default:"employee"},
     password:{type:String,default:null},
     position:{type:String,default:""},
+    department:{type:String,required:true},
     departmentId:{type:mongoose.Schema.Types.ObjectId,ref:"Department",required:true},
     isActive:{type:Boolean,default:false},
     profilepic:{type:String,default:null},
-    joinedAt:{type:Date},
 },{timestamps:true})
 
 export const Employee = mongoose.model("Employee",EmployeeSchema)

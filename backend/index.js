@@ -4,7 +4,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { configure } from './config/db.js';
 import AuthRoute from './routes/AuthRoutes.js'
-
+import CompanyRoute from './routes/CompanyRoutes.js'
+import DepartmentRoute from './routes/DepartmentRoutes.js'
+import EmployeeRoute from './routes/EmployeeRoutes.js'
 
 dotenv.config();
 
@@ -22,7 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // routes 
 app.use('/api/auth',AuthRoute)
-
+app.use('/api/company',CompanyRoute)
+app.use('/api/department',DepartmentRoute)
+app.use('/api/employee',EmployeeRoute)
 
 
 // connect to database
