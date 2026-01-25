@@ -6,6 +6,6 @@ export const EmployeeMapper = (employee)=>({
     departmentId:employee.departmentId,
     role:employee.role,
     profilepic:employee.profilepic,
-    isActive:employee.isverified,
+    isActive:employee.isActive,
     joinedAt:employee.createdAt
 })

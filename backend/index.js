@@ -7,6 +7,8 @@ import AuthRoute from './routes/AuthRoutes.js'
 import CompanyRoute from './routes/CompanyRoutes.js'
 import DepartmentRoute from './routes/DepartmentRoutes.js'
 import EmployeeRoute from './routes/EmployeeRoutes.js'
+import HrRoute from './routes/HrRoutes.js'
+import AttendanceRoute from "./routes/AttendanceRoutes.js"
 
 dotenv.config();
 
@@ -27,6 +29,9 @@ app.use('/api/auth',AuthRoute)
 app.use('/api/company',CompanyRoute)
 app.use('/api/department',DepartmentRoute)
 app.use('/api/employee',EmployeeRoute)
+app.use('/api/hr',HrRoute)
+app.use('/api/attendance',AttendanceRoute)
+
 
 
 // connect to database

@@ -132,5 +132,30 @@ export const ToggleEnableandDisableDepartment = async(req,res)=>{
     }
 }
 
-
-
+export const GetAlldepartment = async(req,res)=>{
+    try {
+         const hrId = req.user 
+          // HR check
+         const Hr = await HrModel.findById(hrId);
+         if (!Hr) {
+           return Response(res, 404, "Hr not found");
+         }
+         if (Hr.role !== "hr") {
+          return Response(res, 403, "You are not authorized");
+         }
+         // find company
+        const company = await CompanyModel.findOne({ hrId });
+         if (!company) {
+           return Response(res, 404, "Company not found");
+        }
+        const dept =  await Department.find({companyId:company._id})
+        if(!dept){
+          return Response(res,200,"No Departments found")
+        }
+        return Response(res,200,"Departments found",{departments:dept})
+    } catch (error) {
+        console.error("failed to get departments",error)
+        return Response(res,500,"Internal server error")
+      
+    }
+}

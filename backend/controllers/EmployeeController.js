@@ -1,10 +1,13 @@
 import { CompanyModel } from "../models/CompanyModel.js"
 import { Department } from "../models/DepartmentModel.js"
-import { Employee } from "../models/EmployeeModel.js"
+import { Employee} from "../models/EmployeeModel.js"
 import { HrModel } from "../models/HrModel.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 import { Response } from "../utils/ResponseHandler.js"
+import { validationResult } from "express-validator"
+import cloudinary from "../config/cloudinary.js"
+import { EmployeeMapper } from "../mappers/EmployeeMapper.js"
 
 
 
@@ -88,6 +91,150 @@ export const VerifyInviteTokenAndSetpassword = async(req,res)=>{
         
     }
 }
+
+export const toggleActiveAndInActiveEmployee = async(req,res)=>{
+    try {
+            const hrId= req.user;
+            const employeeId = req.params.id
+            const { isActive } = req.body;
+        
+            const Hr = await HrModel.findById(hrId);
+            if (!Hr) {
+              return Response(res, 404, "Hr not found");
+            }
+            if (Hr.role !== "hr") {
+              return Response(res, 403, "You are not authorized");
+            }
+            const employee = await Employee.findById(employeeId)
+            if(!employee){
+                return Response(res,404,"Employee not found")
+            }
+            employee.isActive = isActive
+            await employee.save();
+            return Response(res, 200, `Employee ${isActive ? 'active' :'inactive'} successfully`);
+    } catch (error) {
+        console.error("toggle employee error",error)
+        return Response(res,500,"Internal server error")
+    }
+}
+
+export const GetAllEmployees = async(req,res)=>{
+    try {
+        const hrId = req.user 
+        const Hr = await HrModel.findById(hrId)
+        if(!Hr){
+            return Response(res,404,"Hr not found")
+        }
+        if(Hr.role !== "hr"){
+            return Response(res,403,"You are not authorized")
+        }
+        const company = await CompanyModel.findOne({hrId})
+        if(!company){
+            return Response(res,404,"Company not found")
+        }
+        const employees = await Employee.find({companyId:company._id})
+        if(!employees){
+          return Response(res,200,"No Employees found",[])
+        }
+        return Response(res,200,"Employees found",employees)
+    } catch (error) {
+        console.error("failed to get employee",error)
+        return Response(res,500,"Internal server error")
+    }
+}
+export const UpdateEmployeeProfile = async(req,res)=>{
+    try {
+         const employeeId = req.user 
+        // check for validation errors
+         const errors =   validationResult(req);
+         if(!errors.isEmpty()){
+            return Response(res,400,"Validation errors",errors.array())
+         }
+         const {name,email} = req.body 
+         const file = req.file 
+
+         const employee = await Employee.findById(employeeId)
+         if(!employee){
+            return Response(res,404,"employee not found")
+         }
+         if(employee.role !== "employee"){
+            return Response(res,403,"You are not authorized")
+         }
+         if(employee._id.toString() !== employeeId){
+            return Response(res,403,"You are not authorized to update")
+         }
+         let updateDate = {}
+         if(name) updateDate.name = name
+         if(email) updateDate.email = email
+         if(file){
+             const imageBase64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+             const cloudResponse = await cloudinary.uploader.upload(imageBase64,{
+                 folder: "Hr-management-saas",
+                 resource_type: "image",
+             })
+             updateDate.profilepic = cloudResponse.secure_url
+         }
+         if(Object.keys(updateDate).length === 0){
+            return Response(res,200,"No fields provided to update ")
+         }
+         const updatedEmployee = await Employee.findByIdAndUpdate(employeeId,{$set:updateDate},{new:true})
+         return Response(res,200,"Profile update successfully",{user:EmployeeMapper(updatedEmployee)})
+    } catch (error) {
+        console.error("failed to update employee profile",error)
+        return Response(res,500,"Internal server error")
+    }
+}
+
+export const ChangeEmployeeAccountPassword = async(req,res)=>{
+    try {
+    const employeeId = req.user;
+    const { oldpassword, newpassword } = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return Response(res, 400, "Validation failed", errors.array());
+    }
+    if (oldpassword === newpassword) {
+      return Response(
+        res,
+        400,
+        "New password must be different from old password"
+      );
+    }
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+      return Response(res, 404, "employee not found");
+    }
+    if(employee.role !== "employee"){
+            return Response(res,403,"You are not authorized")
+         }
+    if(employee._id.toString() !== employeeId){
+            return Response(res,403,"You are not authorized to update")
+    }
+    const isMatch = await bcrypt.compare(oldpassword,employee.password);
+    if (!isMatch) {
+      return Response(res, 401, "Old password is incorrect");
+    }
+    const hashpassword = await bcrypt.hash(newpassword, 10);
+    await Employee.findByIdAndUpdate(
+      employeeId,
+      { $set: { password: hashpassword } },
+      { new: true }
+    );
+    return Response(res, 200, "password change successfully");
+    } catch (error) {
+    console.error("failed to change password", error);
+    return Response(res, 500, "Internal server error");
+    }
+} 
+
+
+
+
+
+
+
+
+
 
 
 
