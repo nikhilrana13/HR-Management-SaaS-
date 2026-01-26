@@ -9,6 +9,7 @@ import DepartmentRoute from './routes/DepartmentRoutes.js'
 import EmployeeRoute from './routes/EmployeeRoutes.js'
 import HrRoute from './routes/HrRoutes.js'
 import AttendanceRoute from "./routes/AttendanceRoutes.js"
+import { MarkedAutoAbsent } from './jobs/AutoAbsent.js';
 
 dotenv.config();
 
@@ -45,5 +46,6 @@ configure()
 
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
+    MarkedAutoAbsent()
 })
 

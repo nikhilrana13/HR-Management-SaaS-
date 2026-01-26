@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 const AttendanceSchema = new mongoose.Schema({
      employeeId:{type:mongoose.Schema.Types.ObjectId,ref:"Employee",required:true},
      companyId:{type:mongoose.Schema.Types.ObjectId,ref:"CompanyModel",required:true},
-     clockedIn:{type:Date,required:true},
+     clockedIn:{type:Date,default:null},
      clockedOut:{type:Date,default:null},
      date:{type:Date,required:true},
      status:{type:String,enum:["present","absent","halfday"],default:"present"},
