@@ -1,4 +1,5 @@
 export const EmployeeMapper = (employee)=>({
+    id:employee._id,
     name:employee.name,
     email:employee.email,
     companyId:employee.companyId,

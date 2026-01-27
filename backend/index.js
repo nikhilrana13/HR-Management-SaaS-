@@ -10,6 +10,8 @@ import EmployeeRoute from './routes/EmployeeRoutes.js'
 import HrRoute from './routes/HrRoutes.js'
 import AttendanceRoute from "./routes/AttendanceRoutes.js"
 import { MarkedAutoAbsent } from './jobs/AutoAbsent.js';
+import LeaveRoute from './routes/LeavesRoutes.js'
+import AnnouncementRoute from "./routes/AnnouncementRoutes.js"
 
 dotenv.config();
 
@@ -32,18 +34,14 @@ app.use('/api/department',DepartmentRoute)
 app.use('/api/employee',EmployeeRoute)
 app.use('/api/hr',HrRoute)
 app.use('/api/attendance',AttendanceRoute)
-
-
+app.use('/api/leave',LeaveRoute)
+app.use('/api/announcement',AnnouncementRoute)
 
 // connect to database
 configure()
-
-
 // app.use("/",(req,res)=>{
 //     res.send("API is running...");
 // })
-
-
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
     MarkedAutoAbsent()

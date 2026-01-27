@@ -1,5 +1,6 @@
 
 export const HrMapper = (hr)=>({
+    id:hr._id,
     name:hr.name,
     email:hr.email,
     companyId:hr.companyId,
