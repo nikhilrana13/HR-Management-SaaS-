@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import http from "http"
 import { configure } from './config/db.js';
 import AuthRoute from './routes/AuthRoutes.js'
 import CompanyRoute from './routes/CompanyRoutes.js'
@@ -12,6 +13,7 @@ import AttendanceRoute from "./routes/AttendanceRoutes.js"
 import { MarkedAutoAbsent } from './jobs/AutoAbsent.js';
 import LeaveRoute from './routes/LeavesRoutes.js'
 import AnnouncementRoute from "./routes/AnnouncementRoutes.js"
+import { initializeSocket } from './config/socketService.js';
 
 dotenv.config();
 
@@ -24,7 +26,9 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
+// create socket io server
+const server = http.createServer(app)
+initializeSocket(server)
 
 
 // routes 
@@ -42,7 +46,7 @@ configure()
 // app.use("/",(req,res)=>{
 //     res.send("API is running...");
 // })
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
     MarkedAutoAbsent()
 })

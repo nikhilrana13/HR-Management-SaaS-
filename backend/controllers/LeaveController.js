@@ -4,9 +4,13 @@ import { CompanyModel } from "../models/CompanyModel.js"
 import { Response } from "../utils/ResponseHandler.js"
 import { response } from "express"
 import { HrModel } from "../models/HrModel.js"
+import { Notification } from "../models/NotificationModel.js"
+import { getIo } from "../config/socketService.js"
+
 
 export const ApplyForLeave = async(req,res)=>{
         try {
+             const io = getIo()
              const employeeId = req.user
              const {leaveType,title,reasonforleave,startDate,endDate} = req.body
              
@@ -52,7 +56,8 @@ export const ApplyForLeave = async(req,res)=>{
              if(!company){
                 return Response(res,404,"Company not found")
              } 
-             
+            //  find hr 
+            const hr = await HrModel.findById(company.hrId)
              // Check for overlapping leaves for the same employee
              const overlappingLeave = await Leave.findOne({
                  employeeId,
@@ -76,6 +81,38 @@ export const ApplyForLeave = async(req,res)=>{
                  endDate: end,
                  appliedOn: new Date()
              })
+             // db notification create 
+             await Notification.create({
+                companyId:company._id,
+                receiverId:employee._id,
+                receiverRole:employee.role,
+                type:"leave",
+                title:"Leave request submitted sucessfully",
+                content:"Your Leave request submitted sucessfully and waiting for approval"
+             })
+            // socket employee notification 
+            io.to(`user_${employee._id}`.toString()).emit("notification",{
+                title:"Leave Request",
+                message:title,
+                type:"leave"
+            })
+
+            // db notification create for hr 
+            await Notification.create({
+                companyId:company._id,
+                receiverId:hr._id,
+                receiverRole:hr.role,
+                type:"leave",
+                title:"New leave request received",
+                content:"A new leave request has been received.please review and take action"
+            })
+             // socket hr notification 
+            io.to(`user_${hr._id}`.toString()).emit("notification",{
+                title:"Leave Request",
+                message:"New leave request received",
+                type:"leave"
+            })
+
              return Response(res,201,"Leave applied successfully and waiting for approval",{leave})
         } catch (error) {
             console.error('Failed to apply leave:', error.message)
@@ -162,6 +199,7 @@ export const EmployeeLeaveDashboardStats = async(req,res)=>{
 }
 export const ApprovedAndRejectLeave = async(req,res)=>{
       try {
+        const io = getIo()
         const hrId = req.user 
         const {leaveId, status, rejectedReason} = req.body
         // Validate required fields
@@ -189,6 +227,21 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             leave.approvedBy = hrId
             leave.rejectedBy = null
             leave.rejectedReason = null
+            await leave.save();
+            // create notification
+            await Notification.create({
+                companyId:leave.companyId,
+                receiverId:leave.employeeId,
+                receiverRole:"employee",
+                type:"leave",
+                title:"Leave Approved Successfully",
+                content:`Your Leave has been approved By ${hr.name}`
+            })
+             // socket employee notification 
+            io.to(`user_${leave.employeeId}`).emit("notification",{
+                title:"Leave Approved Successfully",
+                type:"leave"
+            })
         }
         // Handle Rejection
         if(status === "rejected"){
@@ -201,9 +254,23 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             leave.status = "rejected"
             leave.rejectedReason = rejectedReason
             leave.rejectedBy = hrId
-            leave.approvedBy = null   
+            leave.approvedBy = null  
+            await leave.save(); 
+             // create notification
+            await Notification.create({
+                companyId:leave.companyId,
+                receiverId:leave.employeeId,
+                receiverRole:"employee",
+                type:"leave",
+                title:"Leave Rejected",
+                content:`Your Leave was rejected By ${hr.name}`
+            })
+            // socket employee notification 
+            io.to(`user_${leave.employeeId}`).emit("notification",{
+                title:"Your leave was rejected",
+                type:"leave"
+            })
         }
-        await leave.save();
        const populatedLeave = await Leave.findById(leaveId).populate("approvedBy", "name email").populate("rejectedBy", "name email");
         return Response(res, 200, `Leave ${status} successfully`, populatedLeave)
       } catch (error) {
@@ -295,6 +362,7 @@ export const HrLeaveDashboardStats = async(req,res)=>{
         return Response(res,500,"Internal server error")
     }
 }
+
 
 
 

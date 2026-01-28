@@ -1,3 +1,4 @@
+import { getIo } from "../config/socketService.js"
 import { Announcement } from "../models/AnnouncementModel.js"
 import { CompanyModel } from "../models/CompanyModel.js"
 import { Employee } from "../models/EmployeeModel.js"
@@ -7,8 +8,10 @@ import { Response } from "../utils/ResponseHandler.js"
 
 export const CreateAnnouncement = async(req,res)=>{
     try {
+         const io = getIo()
          const hrId = req.user 
          const {title,content,category} = req.body 
+
 
          if(!title || !content || !category){
             return Response(res,400,"All fields Are required")
@@ -34,6 +37,13 @@ export const CreateAnnouncement = async(req,res)=>{
             title,
             content,
             category
+        })
+        // socket broadcast to all employee of company
+        io.to(`company_${company._id}`).emit("notification",{
+            type:"announcement",
+            title:"New announcement",
+            message:title,
+            announcementId:announcement._id
         })
         company.announcements.push(announcement._id)
         await company.save()
@@ -70,6 +80,13 @@ export const GetAllCompanyAnnouncements = async(req,res)=>{
     return Response(res, 500, "Internal server error");
     }
 }
+
+
+
+
+
+
+
 
 
 
