@@ -10,3 +10,5 @@ router.get("/markread",AuthMiddleware,MarkReadNotifications)
 export default router 
 
 
+
+
