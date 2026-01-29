@@ -297,7 +297,7 @@ export const GetAllEmployeeLeaves = async(req,res)=>{
          if(!company){
             return Response(res,404,"Company not found")
          }
-         const leaves = await Leave.find({companyId:company._id}).populate("employeeId","name email profilepic").populate("approvedBy","name").populate("rejectedBy","name").skip(skip).limit(limit).sort({createdAt:-1}).lean()
+         const leaves = await Leave.find({companyId:company._id}).populate("employeeId","name email profilepic position").populate("approvedBy","name").populate("rejectedBy","name").skip(skip).limit(limit).sort({createdAt:-1}).lean()
          const totalLeaves = await Leave.countDocuments({companyId:company._id})
          const totalPages = Math.ceil(totalLeaves / limit)
          

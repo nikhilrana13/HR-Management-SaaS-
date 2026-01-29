@@ -1,6 +1,12 @@
 "use client"
+import { SetUser } from '@/redux/AuthSlice';
+import axios from 'axios';
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
+import { ThreeDots } from 'react-loader-spinner';
+import { useDispatch } from 'react-redux';
 
 const page = () => {
     const [showPassword, setShowPassword] = useState(false); 
@@ -12,6 +18,8 @@ const page = () => {
     const[Errors,setErrors] = useState({})
      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/;
+     const router = useRouter(); 
+     const dispatch = useDispatch()
 
     const handleInputChange = (e)=>{
         const {name,value} = e.target 
@@ -38,8 +46,29 @@ const page = () => {
             email:input.email,
             password:input.password
         }
-        
         // console.log('data',data)
+        try {
+            setLoading(true)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,data)
+            if(response.data.status === "success"){
+               toast.success(response.data.message)
+               const user = response?.data?.data?.user 
+               const token = response?.data?.data?.token 
+               localStorage.setItem("token",token)
+               dispatch(SetUser(user))
+               if(user.role === "employee"){
+                  router.replace("/employee/dashboard")
+               }else if(user.role === "hr"){
+                 const destination = user.companyId ? "/hr/dashboard" : "/hr/onboarding/createcompany"
+                 router.replace(destination)
+               }
+            }
+        } catch (error) {
+          console.error("failed to login",error)
+          return toast.error(error?.response?.data?.message || "Internal server error")
+        }finally{
+          setLoading(false)
+        }
     }
   return (
      <div className="min-h-screen flex flex-col bg-[#f6f6f8] dark:bg-[#101322] ">
@@ -143,7 +172,20 @@ const page = () => {
               type="submit"
               className="w-full h-14 cursor-pointer bg-[#1337ec] text-white rounded-lg font-bold text-base hover:bg-[#1337ec]/90 focus:ring-4 focus:ring-[#1337ec]/30 transition-all flex items-center justify-center gap-2"
             >
-              Sign In →
+              {loading ? (
+                          <ThreeDots
+                                visible={true}
+                                height="40"
+                                width="40"
+                                color="#ffffff"
+                                radius="9"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                              />
+                            ) : (
+                              "Sign In → "
+                  )}
             </button>
           </form>
           {/* BOTTOM TEXT */}

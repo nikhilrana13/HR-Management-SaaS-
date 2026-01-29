@@ -1,10 +1,38 @@
 "use client"
-import React from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { BiBuildingHouse, BiPhone } from 'react-icons/bi'
 import { FaLocationDot } from 'react-icons/fa6'
 import { MdEmail } from 'react-icons/md'
+import { ThreeDots } from 'react-loader-spinner'
 
 const CreateCompanyForm = () => {
+    const [loading, setloading] = useState(false)
+    const { register, handleSubmit, formState: { errors } } = useForm()
+    const router = useRouter()
+
+    const onSubmit = async (data) => {
+        try {
+            setloading(true)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/company/create`, data, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+            if (response?.data?.status === "success") {
+                toast.success(response?.data?.message) 
+                router.replace("/hr/dashboard")
+            }
+        } catch (error) {
+            console.error("failed to create company", error)
+            return toast.error(error?.response?.data?.message || "Internal server error")
+        } finally {
+            setloading(false)
+        }
+    }
     return (
         <div className="min-h-screen flex flex-col bg-[#f6f6f8] dark:bg-[#101322]">
             <header className="flex items-center justify-between border-b border-[#e7e9f3] dark:border-white/10 px-6 py-3 bg-white dark:bg-[#101322]/50">
@@ -41,7 +69,7 @@ const CreateCompanyForm = () => {
                     </div>
                     {/* FORM CARD */}
                     <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl p-8 md:p-10">
-                        <form className="space-y-6">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             {/* COMPANY NAME */}
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -53,13 +81,16 @@ const CreateCompanyForm = () => {
                                     </span>
                                     <input
                                         type="text"
-                                        required
+                                        name='name'
                                         placeholder="e.g. Acme Corp"
                                         className="block w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#1337ec]/20 focus:border-[#1337ec] transition-all duration-200 resize-none"
+                                        {...register("name", { required: true })}
                                     />
                                 </div>
                             </div>
-
+                            {errors.name && (
+                                <p className="text-red-500 mt-1 text-[0.75rem]">Company name is required</p>
+                            )}
                             {/* EMAIL */}
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -71,26 +102,31 @@ const CreateCompanyForm = () => {
                                     </span>
                                     <input
                                         type="email"
-                                        required
+                                        name='email'
                                         placeholder="hr@company.com"
                                         className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#1337ec]/20 focus:border-[#1337ec]"
+                                        {...register("email", { required: true })}
                                     />
                                 </div>
                             </div>
+                            {errors.email && (
+                                <p className="text-red-500 mt-1 text-[0.75rem]">Company email is required</p>
+                            )}
                             {/* PHONE */}
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                    Phone Number <span className="text-red-500">*</span>
+                                    Phone Number
                                 </label>
                                 <div className="relative group">
                                     <span className="absolute left-4  top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1337ec] transition-colors">
                                         <BiPhone className='text-current' />
                                     </span>
                                     <input
-                                        type="tel"
-                                        required
+                                        type="number"
+                                        name="phoneNumber"
                                         placeholder="+1 (555) 000-0000"
                                         className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#1337ec]/20 focus:border-[#1337ec]"
+                                        {...register("phoneNumber")}
                                     />
                                 </div>
                             </div>
@@ -98,7 +134,7 @@ const CreateCompanyForm = () => {
                             {/* ADDRESS */}
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                    Company Address <span className="text-red-500">*</span>
+                                    Company Address
                                 </label>
                                 <div className="relative group">
                                     <span className="absolute left-4 group-focus-within:text-[#1337ec] transition-colors top-4 text-gray-400">
@@ -106,19 +142,33 @@ const CreateCompanyForm = () => {
                                     </span>
                                     <textarea
                                         rows={4}
-                                        required
+                                        name="address"
+                                        maxLength={400}
                                         placeholder="Enter full physical address"
                                         className="w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-[#1337ec]/20 focus:border-[#1337ec] resize-none"
+                                        {...register("address")}
                                     />
                                 </div>
                             </div>
-
                             {/* BUTTON */}
                             <button
                                 type="submit"
-                                className="w-full bg-[#1337ec] hover:bg-[#1337ec]/90 text-white font-bold py-4 rounded-lg shadow-lg shadow-[#1337ec]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                className="w-full cursor-pointer bg-[#1337ec] hover:bg-[#1337ec]/90 text-white font-bold py-4 rounded-lg shadow-lg shadow-[#1337ec]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                             >
-                                Create Company →
+                                {loading ? (
+                                    <ThreeDots
+                                        visible={true}
+                                        height="40"
+                                        width="40"
+                                        color="#ffffff"
+                                        radius="9"
+                                        ariaLabel="three-dots-loading"
+                                        wrapperStyle={{}}
+                                        wrapperClass=""
+                                    />
+                                ) : (
+                                    "Create Company →"
+                                )}
                             </button>
                         </form>
                     </div>

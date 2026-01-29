@@ -81,6 +81,15 @@ export const LoginHr = async(req,res)=>{
     }
 }
 
+export const Logout = async(req,res)=>{
+    try {
+        res.clearCookie("token",{httpOnly:true,secure:true,sameSite:'none'})
+        return Response(res,200,"Logout successfully")
+    } catch (error) {
+        console.error("Error in Logout user:", error);
+        return Response(res,500,"Internal Server Error");
+    }
+}
 
 
 

@@ -20,7 +20,7 @@ export const CreateCompany = async (req, res) => {
     if (Hr.role !== "hr") {
       return Response(res, 403, "You are not authorized to create company");
     }
-    if (Hr.companyId !== null || Hr.companyId !== undefined) {
+    if (Hr.companyId) {
       return Response(res, 403, "You can Create only one company");
     }
     const company = await CompanyModel.create({

@@ -1,12 +1,15 @@
+import Sidebar from '@/components/common/Sidebar'
 import React from 'react'
 
 const layout = ({children}) => {
   return (
-    <div>
+    <div className='w-full flex flex-col md:flex-row min-h-screen'>
         {/* left side */}
-        <div></div>
+        <div className='w-full md:w-[20%]'>
+          <Sidebar />
+        </div>
         {/* right side */}
-        <div>
+        <div className='w-full md:w-[80%] overflow-y-auto bg-[#f6f6f8] dark:bg-[#101322] h-screen' >
             {children}
         </div>
     </div>
