@@ -46,7 +46,7 @@ export const AddEmployeeAndAssignDepartment = async(req,res)=>{
         await dept.save()
         // generate invite jwt token link and send it to employee to set password  
         const invitetoken = jwt.sign({id:employee._id,role:"employee",purpose:"invite"},process.env.JWT_SECRET,{expiresIn:'48h'})
-        const inviteLink = `${process.env.NEXT_FRONTEND_URL}/set-password/${invitetoken}`
+        const inviteLink = `${process.env.NEXT_FRONTEND_URL}/auth/set-password/${invitetoken}`
         return Response(res,200,"Employee added successfully",{inviteLink})
 
     } catch (error) {
@@ -121,6 +121,11 @@ export const toggleActiveAndInActiveEmployee = async(req,res)=>{
 export const GetAllEmployees = async(req,res)=>{
     try {
         const hrId = req.user 
+        let {department,isActive,page = 1, limit = 6} = req.query
+        page = parseInt(page)
+        limit = parseInt(limit)
+        const skip = (page - 1) * limit 
+
         const Hr = await HrModel.findById(hrId)
         if(!Hr){
             return Response(res,404,"Hr not found")
@@ -132,11 +137,27 @@ export const GetAllEmployees = async(req,res)=>{
         if(!company){
             return Response(res,404,"Company not found")
         }
-        const employees = await Employee.find({companyId:company._id})
-        if(!employees){
+        let filters = {companyId:company._id}
+        if(department && department !== "all"){
+            filters.department = department
+        }
+        if(isActive){
+            filters.isActive = isActive
+        }
+        const employees = await Employee.find(filters).skip(skip).limit(limit).sort({createdAt: -1})
+        const totalemployee = await Employee.countDocuments(filters)
+        const totalPages = Math.ceil(totalemployee / limit)
+
+        if(employees.length === 0){
           return Response(res,200,"No Employees found",[])
         }
-        return Response(res,200,"Employees found",employees)
+
+        return Response(res,200,"Employees found",{employees,pagination:{
+            totalPages,
+            totalemployee,
+            currentPage:page,
+            limit,
+        }})
     } catch (error) {
         console.error("failed to get employee",error)
         return Response(res,500,"Internal server error")

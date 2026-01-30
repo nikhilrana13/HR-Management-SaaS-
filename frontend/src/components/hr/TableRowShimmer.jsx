@@ -1,6 +1,9 @@
+"use client"
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 const TableRowShimmer = () => {
+     const pathname = usePathname()
   return (
     <tr className="animate-pulse">
   {/* Employee */}
@@ -31,7 +34,13 @@ const TableRowShimmer = () => {
   <td className="px-6 py-4">
     <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
   </td>
-
+    {
+    pathname === "/hr/dashboard/employees" && (
+     <td className="px-6 py-4">
+    <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
+    </td>
+    )
+   }
   {/* Date */}
   <td className="px-6 py-4 text-right">
     <div className="h-3 w-20 ml-auto rounded bg-gray-200 dark:bg-gray-700" />

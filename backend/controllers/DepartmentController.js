@@ -12,6 +12,7 @@ export const CreateDepartment = async(req,res)=>{
         if(!name || !name.trim()){
             return Response(res,400,"Department name is Required")
         }
+        const normalizedName = name.trim().toLowerCase()
         const Hr = await HrModel.findById(hrId);
         if (!Hr) {
               return Response(res, 404, "Hr not found");
@@ -25,14 +26,14 @@ export const CreateDepartment = async(req,res)=>{
         }
         const existingDept = await Department.findOne({
             companyId:company._id,
-            name:name.trim()
+            name:normalizedName
         })
         if(existingDept){
             return Response(res,409,"Department already exists")
         }
         const department = await Department.create({
             companyId:company._id,
-            name:name.trim()
+            name:normalizedName
         })
         company.departments.push(department._id)
         await company.save()
@@ -52,6 +53,7 @@ export const UpdateDepartment = async(req,res)=>{
     if (!name || !name.trim()) {
       return Response(res, 400, "Department name is required");
     }
+    const normalizedName = name.trim().toLowerCase()
     // HR check
     const Hr = await HrModel.findById(hrId);
     if (!Hr) {
@@ -77,14 +79,14 @@ export const UpdateDepartment = async(req,res)=>{
     // duplicate department name check
     const existingDept = await Department.findOne({
       companyId: company._id,
-      name: name.trim(),
+      name: normalizedName,
       _id: { $ne: departmentId },
     });
     if (existingDept) {
       return Response(res, 409, "Department with this name already exists");
     }
     // update only name
-    department.name = name.trim();
+    department.name = normalizedName;
     await department.save();
     return Response(res, 200, "Department updated successfully", {
       department,
