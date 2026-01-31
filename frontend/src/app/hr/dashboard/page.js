@@ -107,6 +107,7 @@ const page = () => {
             )
           }
         </div>
+        
         <DashboardChart />
         <RecentLeavesTable />
       </div>

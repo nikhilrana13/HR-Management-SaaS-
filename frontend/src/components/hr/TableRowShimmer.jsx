@@ -41,6 +41,35 @@ const TableRowShimmer = () => {
     </td>
     )
    }
+    {
+    pathname === "/hr/dashboard/departments" && (
+     <td className="px-6 py-4">
+    <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
+    </td>
+    )
+   }
+   {
+    pathname === "/hr/dashboard/attendance" && (
+     <td className="px-6 py-4">
+    <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
+    </td>
+    )
+   }
+   {
+    pathname === "/hr/dashboard/leaves" && (
+     <td className="px-6 py-4">
+    <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
+    </td>
+    )
+   }
+   {
+    pathname === "/hr/dashboard/leaves" && (
+     <td className="px-6 py-4">
+    <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700" />
+    </td>
+    )
+   }
+
   {/* Date */}
   <td className="px-6 py-4 text-right">
     <div className="h-3 w-20 ml-auto rounded bg-gray-200 dark:bg-gray-700" />

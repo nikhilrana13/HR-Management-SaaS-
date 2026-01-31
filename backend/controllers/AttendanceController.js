@@ -263,7 +263,7 @@ export const AllEmployeedailyAttendanceData = async(req,res)=>{
        employeeIds = employees.map((e)=>e._id)
        filters.employeeId = {$in: employeeIds}
     } 
-   const attendances = await Attendance.find(filters).populate("employeeId","name department departmentId profilepic").select("date status clockedIn clockedOut").sort({createdAt:-1}).skip(skip).limit(limit)
+   const attendances = await Attendance.find(filters).populate("employeeId","name department departmentId profilepic").select("date status clockedIn clockedOut totalWorkingMinutes").sort({createdAt:1}).skip(skip).limit(limit)
 
    const totalemployeesAttendance = await Attendance.countDocuments(filters)
    const totalPages = Math.ceil(totalemployeesAttendance / limit)
@@ -282,6 +282,7 @@ export const AllEmployeedailyAttendanceData = async(req,res)=>{
       return Response(res,500,"Internal server error")
     }
 }; 
+
 
 
 

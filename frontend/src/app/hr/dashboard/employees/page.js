@@ -25,7 +25,7 @@ const page = () => {
     "design",
     "sales",
     "marketing",
-    "customer support",
+    "customersupport",
     "accounts",
     "hr"
   ]

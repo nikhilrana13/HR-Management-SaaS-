@@ -1,5 +1,6 @@
+import AddDepartmentDialog from '@/components/hr/AddDepartmentDialog'
 import DashboardHeader from '@/components/hr/DashboardHeader'
-import { Plus } from 'lucide-react'
+import DepartmentTable from '@/components/hr/DepartmentTable'
 import React from 'react'
 
 const page = () => {
@@ -18,14 +19,11 @@ const page = () => {
             </span>
           </div>
           <div>
-             <button className="w-full  px-5 py-3 cursor-pointer bg-[#1337ec] text-white rounded-lg text-[0.8rem] font-medium hover:bg-[#1337ec]/90 focus:ring-4 focus:ring-[#1337ec]/30 transition-all flex items-center justify-center gap-2">
-              <Plus size={22} /> Create Department
-            </button>
+            <AddDepartmentDialog />
           </div>
         </div>
-        {/* department filters */}
-        
-
+        {/* department cards */}
+        <DepartmentTable />
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 import { CompanyModel } from "../models/CompanyModel.js";
 import { Department } from "../models/DepartmentModel.js";
+import { Employee } from "../models/EmployeeModel.js";
 import { HrModel } from "../models/HrModel.js";
 import { Response } from "../utils/ResponseHandler.js";
 
@@ -150,11 +151,13 @@ export const GetAlldepartment = async(req,res)=>{
          if (!company) {
            return Response(res, 404, "Company not found");
         }
+        const totalemployees = await Employee.countDocuments({companyId:company._id})
+
         const dept =  await Department.find({companyId:company._id})
         if(!dept){
           return Response(res,200,"No Departments found")
         }
-        return Response(res,200,"Departments found",{departments:dept})
+        return Response(res,200,"Departments found",{departments:dept,totalemployees})
     } catch (error) {
         console.error("failed to get departments",error)
         return Response(res,500,"Internal server error")
