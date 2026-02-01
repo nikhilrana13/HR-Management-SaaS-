@@ -7,7 +7,7 @@ import { CiSettings } from 'react-icons/ci'
 import { FaUserSecret } from 'react-icons/fa'
 import { HiUsers } from 'react-icons/hi'
 import { LuLayoutDashboard, LuLogOut } from 'react-icons/lu'
-import { MdAccountTree, MdEventBusy } from 'react-icons/md'
+import { MdAccountTree, MdAnnouncement, MdEventBusy } from 'react-icons/md'
 import { PiUserSquare } from 'react-icons/pi'
 import { SlCalender } from 'react-icons/sl'
 import { useSelector } from 'react-redux'
@@ -102,6 +102,17 @@ const Sidebar = () => {
                 }
                 {
                     user?.role === "hr" && (
+                         <Link href='/hr/dashboard/announcements'
+                    className={navlink("/hr/dashboard/announcements")}>
+                    <div className="flex items-center gap-4">
+                        <MdAnnouncement size={23} />
+                        <span className="transition-opacity  text-sm duration-500">Announcements</span>
+                    </div>
+                    </Link>
+                    )
+                }
+                {
+                    user?.role === "hr" && (
                         <Link href='/hr/dashboard/settings'
                     className={navlink("/hr/dashboard/settings")}>
                     <div className="flex items-center gap-4">
@@ -122,6 +133,8 @@ const Sidebar = () => {
                     </Link>
                     )
                 }
+                
+
                 {
                     user?.role === "employee" && (
                        <Link href='/employee/settings'

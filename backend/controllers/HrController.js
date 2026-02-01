@@ -3,7 +3,7 @@ import { HrModel } from "../models/HrModel.js";
 import { Response } from "../utils/ResponseHandler.js";
 import cloudinary from "../config/cloudinary.js";
 import { HrMapper } from "../mappers/HrMapper.js";
-
+import bcrypt from "bcryptjs";
 
 
 

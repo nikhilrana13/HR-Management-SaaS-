@@ -1,10 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import TableRowShimmer from './TableRowShimmer'
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination'
+import LeaveReviewModel from './LeaveReviewModel'
 
 const LeavesRequestTable = () => {
     const [loading,setLoading] = useState(false)
     const [Leaves,setLeaves] = useState([])
+    const [pagination,setPagination] = useState({})
     // fetch leaves
         useEffect(()=>{
                    const fetchLeaves = async()=>{
@@ -18,6 +21,7 @@ const LeavesRequestTable = () => {
                         // console.log("response",response.data)
                         if(response?.data?.status === "success"){
                             setLeaves(response?.data?.data?.leaves)
+                            setPagination(response?.data?.data?.pagination)
                         }
                     } catch (error) {
                         console.error("failed to get leave",error)
@@ -28,6 +32,8 @@ const LeavesRequestTable = () => {
                    fetchLeaves()
             },[])
         // console.log("leaves",Leaves)
+     const start = (pagination?.currentPage - 1) * pagination?.limit + 1 
+    const end = Math.min(pagination?.currentPage * pagination?.limit,pagination?.totalLeaves)
   return (
      <div className="bg-white mt-5 dark:bg-[#1a1d2d] border border-[#e7e9f3] dark:border-[#2a2d3d] rounded-xl shadow-sm overflow-hidden">
   {/* Table */}
@@ -127,7 +133,7 @@ const LeavesRequestTable = () => {
             </span>
           </td>
           <td className="text-right px-5">
-            <button className='bg-[#1337ec] cursor-pointer text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:bg-[#1337ec]/90'>Review</button>
+            <LeaveReviewModel Leave={leave} setLeaves={setLeaves} id={leave?._id} />
           </td>
           </tr>
             )
@@ -144,6 +150,63 @@ const LeavesRequestTable = () => {
           )
         }
     </table>
+      {/* pagination */}
+                {
+                  !loading && (
+                    pagination?.totalPages > 1 && (
+                    <div className="w-full bg-[#f8f9fc] dark:bg-[#101322] border-t-[#cfd3e7] dark:border-t-[#2a2d3d] py-4 px-6 items-center  border-t flex justify-between">
+                   <div className='flex items-center gap-2'>
+                    <span className="text-[#747474] text-[0.9rem] sm:text-[0.8rem] font-[600]">
+                    Showing {start || "NA"}-{end || "NA"} of{" "}
+                    {pagination?.totalLeaves || 0} Leaves
+                  </span>
+                </div>
+                {/* page button */}
+                <div>
+                    <Pagination className="flex gap-2">
+                      <PaginationContent>
+                        <PaginationItem
+                          className={`${
+                            page === 1
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
+                          }  `}
+                        >
+                          <PaginationPrevious
+                            onClick={() => {
+                              if (page > 1) {
+                                setPage((prev) => prev - 1);
+                              }
+                            }}
+                          />
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink className="p-3">
+                            {pagination?.currentPage} of {pagination?.totalPages}
+                          </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem
+                          className={`${
+                            page === pagination.totalPages
+                              ? "opacity-50 cursor-not-allowed"
+                              : " cursor-pointer"
+                          }  `}
+                        >
+                          <PaginationNext
+                            onClick={() => {
+                              if (page < pagination?.totalPages) {
+                                return setPage((prev) => prev + 1);
+                              }
+                            }}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                      </div>
+                    )
+                  )
+                }
   </div>
 </div>
   )

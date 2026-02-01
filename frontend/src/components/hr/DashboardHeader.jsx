@@ -16,7 +16,7 @@ const DashboardHeader = () => {
         "/hr/dashboard/attendance": "Attendance Overview",
         "/hr/dashboard/settings": "Settings Overview",
         "/hr/dashboard/leaves": "Leaves Overview",
-        "/hr/dashboard/announcement": "Announcement",
+        "/hr/dashboard/announcements": "Announcement",
     }
 
     const pageTitle = pageNames[pathname] || "Dashboard Overview"

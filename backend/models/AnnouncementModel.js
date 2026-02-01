@@ -5,7 +5,7 @@ const AnnouncementSchema = new mongoose.Schema({
     hrId:{type:mongoose.Schema.Types.ObjectId,ref:"HrModel",required:true},
     category:{type:String,enum:["corporate","event","hrupdate"],required:true},
     title:{type:String,required:true,maxlength:200},
-    content:{type:String,required:true,maxlength:400}
+    content:{type:String,required:true}
 },{timestamps:true})
 
 export const Announcement = mongoose.model("Announcement",AnnouncementSchema)
