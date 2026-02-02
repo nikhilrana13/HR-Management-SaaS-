@@ -91,14 +91,14 @@ export const ApplyForLeave = async(req,res)=>{
                 content:"Your Leave request submitted sucessfully and waiting for approval"
              })
             // socket employee notification 
-            io.to(`user_${employee._id}`.toString()).emit("notification",{
+            io.to(`user-${employee._id}`.toString()).emit("notification",{
                 title:"Leave Request",
                 message:title,
                 type:"leave"
             })
 
             // db notification create for hr 
-            await Notification.create({
+          const notification = await Notification.create({
                 companyId:company._id,
                 receiverId:hr._id,
                 receiverRole:hr.role,
@@ -107,10 +107,13 @@ export const ApplyForLeave = async(req,res)=>{
                 content:"A new leave request has been received.please review and take action"
             })
              // socket hr notification 
-            io.to(`user_${hr._id}`.toString()).emit("notification",{
-                title:"Leave Request",
-                message:"New leave request received",
-                type:"leave"
+            io.to(`user-${hr._id}`.toString()).emit("notification",{
+                _id:notification._id,
+                title:notification.title,
+                content:notification.content,
+                type:notification.type,
+                createdAt:notification.createdAt,
+                isRead:notification.isRead
             })
 
              return Response(res,201,"Leave applied successfully and waiting for approval",{leave})

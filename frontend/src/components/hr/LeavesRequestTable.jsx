@@ -8,6 +8,7 @@ const LeavesRequestTable = () => {
     const [loading,setLoading] = useState(false)
     const [Leaves,setLeaves] = useState([])
     const [pagination,setPagination] = useState({})
+    const [page,setPage] = useState(1)
     // fetch leaves
         useEffect(()=>{
                    const fetchLeaves = async()=>{
@@ -30,7 +31,7 @@ const LeavesRequestTable = () => {
                     }
                    }
                    fetchLeaves()
-            },[])
+            },[page])
         // console.log("leaves",Leaves)
      const start = (pagination?.currentPage - 1) * pagination?.limit + 1 
     const end = Math.min(pagination?.currentPage * pagination?.limit,pagination?.totalLeaves)

@@ -5,7 +5,7 @@ const notificationSchema = new mongoose.Schema({
     receiverId:{type:mongoose.Schema.Types.ObjectId,required:true},
     receiverRole:{type:String,enum:["hr","employee"],required:true},
     title:{type:String,required:true},
-    message:{type:String,},
+    content:{type:String,required:true},
     type:{type:String,enum:["announcement","leave","attendance","system"]},
     isRead:{type:Boolean,default:false}
 },{timestamps:true})

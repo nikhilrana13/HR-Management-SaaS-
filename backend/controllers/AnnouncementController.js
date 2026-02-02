@@ -37,13 +37,16 @@ export const CreateAnnouncement = async(req,res)=>{
             title,
             content,
             category
-        })
+        }) 
         // socket broadcast to all employee of company
-        io.to(`company_${company._id}`).emit("notification",{
+        io.to(`company-${company._id}`).emit("notification",{
+            _id:announcement._id,
             type:"announcement",
-            title:"New announcement",
-            message:title,
-            announcementId:announcement._id
+            title:announcement.title,
+            content:announcement.content,
+            category:announcement.category,
+            createdAt:announcement.createdAt,
+            isRead:false
         })
         company.announcements.push(announcement._id)
         await company.save()

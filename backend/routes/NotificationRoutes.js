@@ -5,7 +5,7 @@ const router = express.Router()
 
 
 router.get("/all",AuthMiddleware,fetchAllNotifications) 
-router.get("/markread",AuthMiddleware,MarkReadNotifications) 
+router.put("/markread",AuthMiddleware,MarkReadNotifications) 
 
 export default router 
 

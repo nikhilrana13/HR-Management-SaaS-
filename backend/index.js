@@ -13,6 +13,7 @@ import AttendanceRoute from "./routes/AttendanceRoutes.js"
 import { MarkedAutoAbsent } from './jobs/AutoAbsent.js';
 import LeaveRoute from './routes/LeavesRoutes.js'
 import AnnouncementRoute from "./routes/AnnouncementRoutes.js"
+import NotificationRoute from "./routes/NotificationRoutes.js"
 import { initializeSocket } from './config/socketService.js';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/hr',HrRoute)
 app.use('/api/attendance',AttendanceRoute)
 app.use('/api/leave',LeaveRoute)
 app.use('/api/announcement',AnnouncementRoute)
+app.use('/api/notification',NotificationRoute)
 
 // connect to database
 configure()

@@ -13,6 +13,7 @@ import { SlCalender } from 'react-icons/sl'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import UseLogout from '@/hooks/UseLogout'
+import { BellIcon } from 'lucide-react'
 
 const Sidebar = () => {
     const user = useSelector((state) => state.Auth.user)
@@ -111,6 +112,14 @@ const Sidebar = () => {
                     </Link>
                     )
                 }
+                <Link href={` ${user?.role === "hr" ? '/hr/dashboard/notifications' : '/employee/notifications'}`}
+                    className={`${user?.role === "hr" ? navlink("/hr/dashboard/notifications") : navlink("/employee/notifications")}`}>
+                    <div className="flex items-center gap-4">
+                        <BellIcon size={23} />
+                        <span className="transition-opacity  text-sm duration-500">Notifications</span>
+                    </div>
+                </Link>
+
                 {
                     user?.role === "hr" && (
                         <Link href='/hr/dashboard/settings'

@@ -1,10 +1,14 @@
+
 import { io } from "socket.io-client";
 
+let socket;
 
-export const socket = io(process.env.NEXT_PUBLIC_FRONTEND_URL,{
-    withCredentials:true,
-    transports:['websocket']
-})
-
-export default socket 
-
+export const getSocket = () => {
+  if (!socket) {
+    socket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
+      withCredentials: true,
+      transports: ["websocket"],
+    });
+  }
+  return socket;
+};
