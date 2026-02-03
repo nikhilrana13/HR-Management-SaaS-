@@ -37,7 +37,7 @@ export const AttendanceCheckIn = async (req, res) => {
       date: todayIst,
       clockedIn: new Date(),
     });
-    return Response(res, 201, "Clock-in marked successfully");
+    return Response(res, 201, "Clock-in marked successfully",{clockedIn});
   } catch (error) {
     console.log("failed to marked clocked in", error);
     return Response(res, 500, "Internal server error");
@@ -93,10 +93,12 @@ export const AttendanceCheckOut = async (req, res) => {
 export const EachEmployeeMonthAttendance = async (req, res) => {
   try {
     const employeeId = req.user;
-    const { year, month, page = 1, limit = 6 } = req.query;
-    if (!year || !month) {
-      return Response(res, 400, "Year and month is required");
-    }
+    const currentYear = moment().tz("Asia/Kolkata").year()
+    const currentMonth = moment().tz("Asia/Kolkata").month() + 1
+    const { year=currentYear, month=currentMonth, page = 1, limit = 6 } = req.query;
+    // if (!year || !month) {
+    //   return Response(res, 400, "Year and month is required");
+    // }
     const employee = await Employee.findById(employeeId);
     if (!employee) {
       return Response(res, 404, "Employee not found");
@@ -117,10 +119,7 @@ export const EachEmployeeMonthAttendance = async (req, res) => {
       attendance = await Attendance.find({
         employeeId,
         date: { $gte: startDate, $lte: endDate },
-      })
-        .sort({ date: 1 })
-        .skip(skip)
-        .limit(limit);
+      }).sort({ date: 1 }).skip(skip).limit(limit).sort({date:-1})
     } catch (error) {
       console.log("Attendance fetch failed", error);
     }
