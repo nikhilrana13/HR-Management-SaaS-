@@ -22,7 +22,7 @@ const SocketProvider = () => {
     const joinRooms = () => {
       if (joinedRef.current) return; // prevent duplicate join
       joinedRef.current = true;
-    //   console.log("joining rooms...");
+      // console.log("joining rooms...");
       socket.emit("join-company", {
         companyId: user.companyId,
         userId: user.id,
@@ -38,7 +38,7 @@ const SocketProvider = () => {
     }
 
     socket.on("notification", (data) => {
-      console.log("notification received", data);
+      // console.log("notification received", data);
       toast.success(data.title);
       dispatch(addNotification(data));
     });

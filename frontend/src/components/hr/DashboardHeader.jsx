@@ -11,7 +11,6 @@ import NotificationDialogHr from './NotificationDialogHr'
 const DashboardHeader = () => {
     const user = useSelector((state) => state.Auth.user)
     const pathname = usePathname()
-    const unreadCount = useSelector((state)=>state.notification.unreadCount)
 
     const pageNames = {
         "/hr/dashboard": "Dashboard Overview",

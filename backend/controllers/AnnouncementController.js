@@ -3,6 +3,7 @@ import { Announcement } from "../models/AnnouncementModel.js"
 import { CompanyModel } from "../models/CompanyModel.js"
 import { Employee } from "../models/EmployeeModel.js"
 import { HrModel } from "../models/HrModel.js"
+import { Notification } from "../models/NotificationModel.js"
 import { Response } from "../utils/ResponseHandler.js"
 
 
@@ -38,6 +39,17 @@ export const CreateAnnouncement = async(req,res)=>{
             content,
             category
         }) 
+         
+        // save announcement notification to db 
+        await Notification.create({
+            companyId:company._id,
+            receiverRole:"company",
+            receiverId:company._id,
+            type:"announcement",
+            title,
+            content,
+            isRead:false
+        })
         // socket broadcast to all employee of company
         io.to(`company-${company._id}`).emit("notification",{
             _id:announcement._id,
@@ -46,7 +58,6 @@ export const CreateAnnouncement = async(req,res)=>{
             content:announcement.content,
             category:announcement.category,
             createdAt:announcement.createdAt,
-            isRead:false
         })
         company.announcements.push(announcement._id)
         await company.save()

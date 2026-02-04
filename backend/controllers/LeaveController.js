@@ -82,7 +82,7 @@ export const ApplyForLeave = async(req,res)=>{
                  appliedOn: new Date()
              })
              // db notification create 
-             await Notification.create({
+           const notificationemploye = await Notification.create({
                 companyId:company._id,
                 receiverId:employee._id,
                 receiverRole:employee.role,
@@ -92,9 +92,12 @@ export const ApplyForLeave = async(req,res)=>{
              })
             // socket employee notification 
             io.to(`user-${employee._id}`.toString()).emit("notification",{
-                title:"Leave Request",
-                message:title,
-                type:"leave"
+                _id:notificationemploye._id,
+                title:notificationemploye.title,
+                content:notificationemploye.content,
+                type:notificationemploye.type,
+                createdAt:notificationemploye.createdAt,
+                isRead:notificationemploye.isRead
             })
 
             // db notification create for hr 
@@ -232,7 +235,7 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             leave.rejectedReason = null
             await leave.save();
             // create notification
-            await Notification.create({
+          const notification = await Notification.create({
                 companyId:leave.companyId,
                 receiverId:leave.employeeId,
                 receiverRole:"employee",
@@ -242,8 +245,12 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             })
              // socket employee notification 
             io.to(`user_${leave.employeeId}`).emit("notification",{
-                title:"Leave Approved Successfully",
-                type:"leave"
+                _id:notification._id,
+                content:notification.content,
+                title:notification.title,
+                type:notification.type,
+                createdAt:notification.createdAt,
+                isRead:false
             })
         }
         // Handle Rejection
@@ -260,7 +267,7 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             leave.approvedBy = null  
             await leave.save(); 
              // create notification
-            await Notification.create({
+         const notification = await Notification.create({
                 companyId:leave.companyId,
                 receiverId:leave.employeeId,
                 receiverRole:"employee",
@@ -270,8 +277,12 @@ export const ApprovedAndRejectLeave = async(req,res)=>{
             })
             // socket employee notification 
             io.to(`user_${leave.employeeId}`).emit("notification",{
-                title:"Your leave was rejected",
-                type:"leave"
+                _id:notification._id,
+                content:notification.content,
+                title:notification.title,
+                type:notification.type,
+                createdAt:notification.createdAt,
+                isRead:false
             })
         }
        const populatedLeave = await Leave.findById(leaveId).populate("approvedBy", "name email").populate("rejectedBy", "name email");

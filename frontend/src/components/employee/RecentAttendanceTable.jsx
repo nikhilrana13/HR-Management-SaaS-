@@ -1,12 +1,17 @@
 import { formatTime } from '@/helps/FormatDatesndTime'
 import axios from 'axios'
-import { Calendar1 } from 'lucide-react'
+import { Calendar1, Calendar1Icon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import RecentAttendanceShimmer from './RecentAttendanceShimmer'
 import Link from 'next/link'
+import toast from 'react-hot-toast'
+import { Calendar } from '../ui/calendar'
+import AnnouncementShimmer from './AnnouncementShimmer'
 
 const RecentAttendanceTable = ({ attendances, setAttendances }) => {
     const [attendanceloading, setattendanceLoading] = useState(false)
+    const [announcements, setAnnouncements] = useState([])
+    const [annloading, setannLoading] = useState(false)
 
     useEffect(() => {
         const fetchRecentAttendances = async () => {
@@ -23,13 +28,37 @@ const RecentAttendanceTable = ({ attendances, setAttendances }) => {
             } catch (error) {
                 console.error("failed to get attendances", error)
             } finally {
-              setattendanceLoading(false)
+                setattendanceLoading(false)
             }
         }
         fetchRecentAttendances()
     }, [])
-
     // console.log("attendances", attendances)
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                setannLoading(true)
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/announcement/company`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                if (response?.data?.status === "success") {
+                    setAnnouncements(response?.data?.data)
+                }
+
+            } catch (error) {
+                console.error("failed to get announcements", error)
+                toast.error(error?.response?.data?.message || "Internal server error")
+            } finally {
+                setannLoading(false)
+                
+            }
+        }
+        fetchAnnouncements()
+    }, [])
+
+
 
     return (
         <div className="grid grid-cols-1 mt-5 lg:grid-cols-12 gap-8">
@@ -62,7 +91,7 @@ const RecentAttendanceTable = ({ attendances, setAttendances }) => {
                         {
                             attendanceloading ? (
                                 <tbody className="divide-y divide-[#e7e9f3] dark:divide-white/10">
-                                    {[1,2,3,4].map((_,index)=>{
+                                    {[1, 2, 3, 4].map((_, index) => {
                                         return (
                                             <RecentAttendanceShimmer key={index} />
                                         )
@@ -135,79 +164,43 @@ const RecentAttendanceTable = ({ attendances, setAttendances }) => {
             <div className="lg:col-span-4 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold">Announcements</h2>
-                    <button className="text-[#1337ec] text-sm font-medium hover:underline">
+                    <Link href="/employee/announcements" className="text-[#1337ec] text-sm font-medium ">
                         See All
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="flex h-[50vh] custom-scrollbar overflow-y-auto flex-col gap-3">
-                    <div className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
-                        <p className="text-xs font-bold text-[#1337ec] mb-1">
-                            NEW POLICY
-                        </p>
-                        <h3 className="font-bold text-sm mb-1">
-                            Updated Remote Work Guidelines 2024
-                        </h3>
-                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-xs">
-                                calendar_today
-                            </span>
-                            Oct 23, 2023
-                        </p>
-                    </div>
 
-                    <div className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
-                        <p className="text-xs font-bold text-orange-500 mb-1">EVENT</p>
-                        <h3 className="font-bold text-sm mb-1">
-                            Annual Town Hall Meeting: Q3 Recap
-                        </h3>
-                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-xs">
-                                calendar_today
-                            </span>
-                            Oct 21, 2023
-                        </p>
-                    </div>
-
-                    <div className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
-                        <p className="text-xs font-bold text-purple-500 mb-1">
-                            BENEFITS
-                        </p>
-                        <h3 className="font-bold text-sm mb-1">
-                            Health Insurance Enrollment Now Open
-                        </h3>
-                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-xs">
-                                calendar_today
-                            </span>
-                            Oct 18, 2023
-                        </p>
-                    </div>
-
-                    <div className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
-                        <p className="text-xs font-bold text-green-500 mb-1">
-                            CELEBRATION
-                        </p>
-                        <h3 className="font-bold text-sm mb-1">
-                            Employee Appreciation Day Photos
-                        </h3>
-                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
-                            <Calendar1 size={12} />
-                            Oct 15, 2023
-                        </p>
-                    </div>
-                    <div className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
-                        <p className="text-xs font-bold text-green-500 mb-1">
-                            CELEBRATION
-                        </p>
-                        <h3 className="font-bold text-sm mb-1">
-                            Employee Appreciation Day Photos
-                        </h3>
-                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
-                            <Calendar1 size={12} />
-                            Oct 15, 2023
-                        </p>
-                    </div>
+                    {
+                        annloading ? (
+                            <>
+                               {[1,2,3,4].map((_,index)=>{
+                                return (
+                                    <AnnouncementShimmer key={index} />
+                                )
+                               })}
+                            </>
+                        ) : announcements?.length > 0 ? (
+                            announcements.map((a) => {
+                                return (
+                                    <div key={a?._id} className="bg-white dark:bg-[#15192b] p-4 rounded-xl border border-[#e7e9f3] dark:border-white/10 shadow-sm">
+                                        <p className={`text-xs font-bold ${a?.category === "event" ? "text-orange-500" : "text-[#1337ec]" } mb-1`}>
+                                            {a?.category || "NA"}
+                                        </p>
+                                        <h3 className="font-bold text-sm mb-1">
+                                            {a?.title || "NA"}
+                                        </h3>
+                                        <p className="text-xs text-[#4c599a] dark:text-gray-400 flex items-center gap-1">
+                                          <Calendar1Icon size={12} />
+                                            {new Date(a.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}
+                                        </p>
+                                    </div>
+                                )
+                            })
+                        ):(
+                            <p className='text-gray-500 text-center'>No announcements found</p>
+                        )
+                    }
                 </div>
             </div>
         </div>

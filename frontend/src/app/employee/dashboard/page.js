@@ -2,6 +2,7 @@
 import DashboardHeader from '@/components/employee/DashboardHeader'
 import RecentAttendanceTable from '@/components/employee/RecentAttendanceTable'
 import TimeCircle from '@/components/employee/TimeCircle'
+import { formatTime } from '@/helps/FormatDatesndTime'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -13,7 +14,30 @@ const page = () => {
   const [loading,setLoading] = useState(false)  
   const [outloading,setoutLoading] = useState(false)
   const [attendances,setAttendances] = useState([])
+  const [clockedIn,setClockedIn] = useState(null)
+  const [todayatt,setTodayatt] = useState({})
 
+
+  useEffect(()=>{
+        const fetchTodayAttendance = async()=>{
+           try {
+             const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/attendance/details`,{
+              headers:{
+                Authorization:`Bearer ${localStorage.getItem("token")}`
+              }
+             })
+             if(response?.data?.status === "success"){
+                const todayattendance = response?.data?.data?.attendance 
+                setTodayatt(todayattendance)
+                const clockedIn = response?.data?.data?.attendance.clockedIn
+                setClockedIn(clockedIn)
+             }
+           } catch (error) {
+             console.error("failed to get today attendance",error)
+           }
+        }
+        fetchTodayAttendance()
+  },[])
   const handleMarkCheckIn = async()=>{
       try {
         setLoading(true)
@@ -22,8 +46,12 @@ const page = () => {
             Authorization:`Bearer ${localStorage.getItem("token")}`
           }
          })
+        //  console.log("response",response)
          if(response?.data?.status === "success"){
            toast.success(response?.data?.message)
+           const newClockedIn = response?.data?.data?.clockedIn
+           setClockedIn(newClockedIn)
+           setAttendances((prev)=>prev.map((a)=> a?._id === todayatt?._id ? {...a,clockedIn:newClockedIn}:a))
          }
       } catch (error) {
          console.error("failed to attendance mark check in",error)
@@ -42,6 +70,7 @@ const page = () => {
          })
          if(response?.data?.status === "success"){
            toast.success(response?.data?.message)
+           setClockedIn(null)
          }
       } catch (error) {
          console.error("failed to attendance mark check in",error)
@@ -68,12 +97,18 @@ const page = () => {
                   Active Session
                 </p>
               </div>
-              <h2 className="text-xl text-green-600  font-bold">
-               Check-In completed at 09:00am
-              </h2>
-              <p className="text-sm text-gray-500">
-                You've been working since 06:30 AM.
+               {clockedIn && (
+                 <h2 className="text-xl text-green-600  font-bold">
+                    Check-In completed at {formatTime(clockedIn)}
+                </h2>
+              )}
+              {
+                clockedIn && (
+                 <p className="text-sm text-gray-500">
+                You've been working since {formatTime(clockedIn)}
               </p>
+                )
+              }
             </div>
             <div className="flex gap-3">
               <button onClick={()=>handleMarkCheckIn()} className="px-6 py-3 cursor-pointer bg-gray-100 dark:bg-gray-800 rounded-lg font-bold text-sm">

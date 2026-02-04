@@ -16,8 +16,10 @@ export const fetchAllNotifications = async(req,res)=>{
             return Response(res,404,`${role === "employee" ? "Employee" : "Hr"} not found`)
         }
         const notifications = await Notification.find({
-            receiverId: userId,
-            receiverRole: role
+            companyId:user.companyId,$or:[
+                {receiverId:user._id},
+                {receiverRole:"company"}
+            ]
         }).sort({createdAt:-1})
         return Response(res,200,"Notifications found", notifications)
     } catch (error) {

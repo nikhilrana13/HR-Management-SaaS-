@@ -1,3 +1,4 @@
+import { response } from "express";
 import { Attendance } from "../models/AttendanceModel.js";
 import { CompanyModel } from "../models/CompanyModel.js";
 import { Employee } from "../models/EmployeeModel.js";
@@ -17,11 +18,11 @@ export const AttendanceCheckIn = async (req, res) => {
     }
    //  Ist current time 
    const nowIst = moment().tz("Asia/Kolkata")
-   // block check in after 11:00 am
+  //  // block check in after 11:00 am
    if(nowIst.hour() >= 11){
       return Response(res,403,"Check-in time expired. You are marked absent for today")
    }
-    //  IST start of day
+  //   //  IST start of day
     const todayIst = moment().tz("Asia/Kolkata").startOf("day").toDate();
     //  already checked in today
     const alreadyMarked = await Attendance.findOne({
@@ -31,12 +32,13 @@ export const AttendanceCheckIn = async (req, res) => {
     if (alreadyMarked) {
       return Response(res, 400, "Already Checked in today");
     }
-    await Attendance.create({
+   const attendance =  await Attendance.create({
       employeeId,
       companyId: employee.companyId,
       date: todayIst,
       clockedIn: new Date(),
     });
+    const clockedIn = attendance.clockedIn
     return Response(res, 201, "Clock-in marked successfully",{clockedIn});
   } catch (error) {
     console.log("failed to marked clocked in", error);
@@ -90,6 +92,8 @@ export const AttendanceCheckOut = async (req, res) => {
     return Response(res, 500, "Internal server error");
   }
 };
+
+
 export const EachEmployeeMonthAttendance = async (req, res) => {
   try {
     const employeeId = req.user;
@@ -161,8 +165,8 @@ export const EachEmployeeAttendanceStats = async(req,res)=>{
        const endDate =  moment.tz("Asia/Kolkata").endOf("day").toDate()
 
        const attendance = await Attendance.findOne({employeeId:employee._id,date:{$gte:startDate,$lte:endDate}}) 
-       if(!attendance){
-         return Response(res,400,"No Attendance found")
+       if(attendance.length === 0){
+         return Response(res,200,"No Attendance found",[])
        }
        return  Response(res,200,"Attendance found",{attendance})     
    } catch (error) {
