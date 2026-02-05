@@ -32,20 +32,23 @@ export const MarkReadNotifications = async(req,res)=>{
    try {
        const userId = req.user
        const role = req.role
+      let companyId;
        if(role === "employee"){
           const employee = await Employee.findById(userId)
           if(!employee){
             return Response(res,404,"Employee not found")
           }
+           companyId = employee.companyId
        }
        if(role === "hr"){
         const hr = await HrModel.findById(userId)
           if(!hr){
             return Response(res,404,"hr not found")
           }
+           companyId = hr.companyId
        }
        await Notification.updateMany(
-         {receiverId:userId,receiverRole:role,isRead:false},{$set:{isRead:true}}
+        {isRead:false,$or:[{receiverId:userId,receiverRole:role},{receiverId:companyId,receiverRole:"company"}]},{$set:{isRead:true}}
       )
        return Response(res,200,"All Notifications marked as read")
    } catch (error) {

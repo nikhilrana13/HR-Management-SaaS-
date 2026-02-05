@@ -300,7 +300,7 @@ const AttendanceTable = () => {
               )
             }
             </div>
-        </div>
+             </div>
 
 
 

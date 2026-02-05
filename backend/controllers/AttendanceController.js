@@ -99,10 +99,11 @@ export const EachEmployeeMonthAttendance = async (req, res) => {
     const employeeId = req.user;
     const currentYear = moment().tz("Asia/Kolkata").year()
     const currentMonth = moment().tz("Asia/Kolkata").month() + 1
-    const { year=currentYear, month=currentMonth, page = 1, limit = 6 } = req.query;
+    const { year=currentYear, month=currentMonth, page = 1, limit = 5 } = req.query;
     // if (!year || !month) {
     //   return Response(res, 400, "Year and month is required");
     // }
+    // console.log("req query",req.query)
     const employee = await Employee.findById(employeeId);
     if (!employee) {
       return Response(res, 404, "Employee not found");
@@ -142,7 +143,7 @@ export const EachEmployeeMonthAttendance = async (req, res) => {
         currentPage: Number(page),
         totalPages,
         totalRecords: totalCount,
-        perPage: limit,
+        limit: limit,
       },
     });
   } catch (error) {

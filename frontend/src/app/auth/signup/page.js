@@ -235,7 +235,7 @@ const page = () => {
       {/* FOOTER */}
       <footer className="p-6 text-center">
         <p className="text-xs text-[#4c599a] dark:text-gray-500 font-medium">
-          © 2024 HR Management SaaS. Secure Enterprise Registration.
+          © 2026 HR Management SaaS. Secure Enterprise Registration.
         </p>
       </footer>
     </div>
