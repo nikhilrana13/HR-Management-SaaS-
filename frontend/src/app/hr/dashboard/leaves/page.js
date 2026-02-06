@@ -1,4 +1,5 @@
 "use client"
+import EmployeeRequestLeaveTable from '@/components/employee/EmployeeRequestLeaveTable';
 import DashboardHeader from '@/components/hr/DashboardHeader'
 import LeavesRequestTable from '@/components/hr/LeavesRequestTable';
 import StatsCard from '@/components/hr/StatsCard';
@@ -105,8 +106,6 @@ const page = () => {
         </div>
         {/* leaves requests table */}
         <LeavesRequestTable />
-
-
       </div>
     </div>
   )

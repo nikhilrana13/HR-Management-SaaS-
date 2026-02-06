@@ -209,7 +209,7 @@ const LeavesRequestTable = () => {
                   )
                 }
   </div>
-</div>
+     </div>
   )
 }
 
