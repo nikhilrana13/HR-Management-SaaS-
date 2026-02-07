@@ -142,7 +142,17 @@ const Sidebar = () => {
                     </Link>
                     )
                 }
-                
+                {
+                    user?.role === "employee" && (
+                         <Link href='/employee/announcements'
+                    className={navlink("/employee/announcements")}>
+                    <div className="flex items-center gap-4">
+                        <MdAnnouncement size={23} />
+                        <span className="transition-opacity  text-sm duration-500">Announcements</span>
+                    </div>
+                    </Link>
+                    )
+                }
 
                 {
                     user?.role === "employee" && (

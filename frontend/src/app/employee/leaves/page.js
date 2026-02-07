@@ -1,4 +1,5 @@
 "use client"
+import ApplyforLeaveDialog from '@/components/employee/ApplyforLeaveDialog'
 import DashboardHeader from '@/components/employee/DashboardHeader'
 import EmployeeRequestLeaveTable from '@/components/employee/EmployeeRequestLeaveTable'
 import StatsCard from '@/components/hr/StatsCard'
@@ -81,6 +82,19 @@ const page = () => {
     <div className='flex flex-col'>
         <DashboardHeader />
         <div className='flex flex-col gap-3 px-4 md:px-9 py-4'>
+           <div className="flex gap-5 px-2 md:items-center flex-col md:flex-row  md:justify-between">
+          <div className="flex flex-col">
+            <span className="text-[1.5rem]  font-bold text-black dark:text-white">
+              My Leave Mangement
+            </span>
+            <span className="text-sm text-[#4c599a] dark:text-[#a1a7c5] font-normal">
+              Manage and track your leave requests
+            </span>
+          </div>
+          <div>
+            <ApplyforLeaveDialog />
+          </div>
+        </div>
             {/* stats cards */}
         <div className='grid grid-cols-1 mt-4 md:grid-cols-3 lg:grid-cols-4 gap-5'>
           {

@@ -104,6 +104,7 @@ const page = () => {
             )
           }
         </div>
+        
         {/* leaves requests table */}
         <LeavesRequestTable />
       </div>

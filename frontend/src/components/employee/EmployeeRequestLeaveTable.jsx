@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious } from '../ui/pagination'
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination'
 import axios from 'axios'
 import TableRowShimmer from '../hr/TableRowShimmer'
 import LeaveDetailsDialog from './LeaveDetailsDialog'
@@ -16,9 +16,13 @@ const EmployeeRequestLeaveTable = () => {
             try {
                 setLoading(true)
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leave/myleaves`, {
+                    params: {
+                        page:page,
+                        limit: 4
+                    },
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
+                   }
                 })
                 // console.log("response", response.data)
                 if (response?.data?.status === "success") {
@@ -61,10 +65,10 @@ const EmployeeRequestLeaveTable = () => {
                             </tbody>
                         ) : Leaves?.length > 0 ? (
                             <tbody className="divide-y divide-[#e7e9f3] dark:divide-[#2a2d3d]">
-                                {Leaves?.slice(0, 4).map((leave) => {
+                                {Leaves?.map((leave) => {
                                     return (
                                         <tr key={leave?._id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                              <td className="px-6 py-4 text-sm text-[#0d101b] dark:text-gray-300">
+                                            <td className="px-6 py-4 text-sm text-[#0d101b] dark:text-gray-300">
                                                 {new Date(leave?.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(/,/g, '')} - {new Date(leave?.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(/,/g, '')}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-[#0d101b] dark:text-gray-300">
@@ -141,8 +145,8 @@ const EmployeeRequestLeaveTable = () => {
                                         <PaginationContent>
                                             <PaginationItem
                                                 className={`${page === 1
-                                                        ? "opacity-50 cursor-not-allowed"
-                                                        : "cursor-pointer"
+                                                    ? "opacity-50 cursor-not-allowed"
+                                                    : "cursor-pointer"
                                                     }  `}
                                             >
                                                 <PaginationPrevious
@@ -155,13 +159,13 @@ const EmployeeRequestLeaveTable = () => {
                                             </PaginationItem>
                                             <PaginationItem>
                                                 <PaginationLink className="p-3">
-                                                    {Pagination?.currentPage} of {pagination?.totalPages}
+                                                    {pagination?.currentPage} of {pagination?.totalPages}
                                                 </PaginationLink>
                                             </PaginationItem>
                                             <PaginationItem
                                                 className={`${page === pagination.totalPages
-                                                        ? "opacity-50 cursor-not-allowed"
-                                                        : " cursor-pointer"
+                                                    ? "opacity-50 cursor-not-allowed"
+                                                    : " cursor-pointer"
                                                     }  `}
                                             >
                                                 <PaginationNext
