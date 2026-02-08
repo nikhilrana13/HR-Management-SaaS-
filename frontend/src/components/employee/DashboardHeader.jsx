@@ -18,6 +18,7 @@ const DashboardHeader = () => {
         "/employee/attendance": "Attendance Overview",
         "/employee/notifications": "Notifications",
         "/employee/leaves": "Leaves Overview",
+        "/employee/announcements": "Announcements Overview",
         "/empolyee/settings":"Notifications"
     }
 
