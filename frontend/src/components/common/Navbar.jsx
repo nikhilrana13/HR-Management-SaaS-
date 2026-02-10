@@ -55,7 +55,7 @@ const Navbar = () => {
                     {user?.role === "hr" && (
                         <Link
                             href="/hr/dashboard"
-                            className="px-5 text-sm py-2 hover:bg-[#06263D] hover:text-white font-medium border border-gray-300 rounded-md text-[#06263D]"
+                            className="px-5 text-sm py-2 hover:bg-indigo-700 hover:text-white font-medium border border-gray-300 rounded-md text-white bg-[#1337ec]"
                         >
                             Dashboard
                         </Link>
@@ -63,7 +63,7 @@ const Navbar = () => {
                     {user?.role === "employee" && (
                         <Link
                             href="/employee/dashboard"
-                            className="px-5 text-sm py-2 hover:bg-[#06263D] hover:text-white font-medium border border-gray-300 rounded-md text-[#06263D]"
+                            className="px-5 text-sm py-2 hover:bg-indigo-700 hover:text-white font-medium border border-gray-300 rounded-md text-white bg-[#1337ec] "
                         >
                             Dashboard
                         </Link>
