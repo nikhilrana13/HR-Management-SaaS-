@@ -156,7 +156,7 @@ const EmployeeNotificationDialog = () => {
               </div>
               {/* footer */}
               <div class="p-3 border-t border-[#e7e9f3] dark:border-white/10 bg-[#f6f6f8]/30 dark:bg-white/5 text-center">
-                <Link href="/hr/dashboard/notifications" class="inline-flex items-center gap-2 text-sm font-bold text-[#1337ec] hover:text-[#1337ec]/80">
+                <Link href="/employee/notifications" class="inline-flex items-center gap-2 text-sm font-bold text-[#1337ec] hover:text-[#1337ec]/80">
                   View all notifications
                   <ArrowRight size={15} />
                 </Link>
