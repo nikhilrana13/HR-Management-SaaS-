@@ -92,7 +92,7 @@ const Navbar = () => {
                         <div className='flex  gap-3'>
                             {!user && (
                                 <Link
-                                    href="/auth"
+                                    href="/auth/login"
                                     className="px-5 text-sm py-2 hover:bg-indigo-700 hover:text-white font-medium border border-gray-300 rounded-md text-white bg-[#1337ec]"
                                 >
                                     Login
