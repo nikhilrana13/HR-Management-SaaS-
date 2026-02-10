@@ -12,7 +12,7 @@ This platform follows a **Company → HR → Employee** hierarchy and is designe
 - 🔔 Real-time notifications using WebSockets
 - ⏱ Smart attendance system with validations
 - 🤖 Cron-based automation (auto absent marking)
-- 🌗 Modern UI with dark mode & shimmer loaders
+- 🌗 Modern UI with shimmer loaders
 - 🔐 Role-based access & JWT authentication
 
 ---
@@ -114,7 +114,6 @@ Live notifications using **WebSockets (Socket.IO)** for:
 ## 🎨 UI & UX
 - Modern SaaS dashboard
 - Fully responsive design
-- Dark / Light mode
 - Premium shimmer (skeleton loaders)
 - Clean & intuitive layouts
 
@@ -127,6 +126,7 @@ Live notifications using **WebSockets (Socket.IO)** for:
 - React
 - Tailwind CSS
 - Axios
+- ShadCn
 - WebSockets (Socket.IO Client)
 
 ### Backend
@@ -139,5 +139,4 @@ Live notifications using **WebSockets (Socket.IO)** for:
 
 ---
 
-## 📂 Project Structure
 
